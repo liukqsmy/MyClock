@@ -1,5 +1,6 @@
 package com.example.administrator.myclock;
 
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -49,7 +51,25 @@ public class AlarmView extends LinearLayout {
     }
 
     private void addAlarm() {
-        //TODO
+
+        Calendar c = Calendar.getInstance();
+        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener(){
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+
+                Calendar calendar = Calendar.getInstance();
+
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+
+                Calendar currentTime = Calendar.getInstance();
+
+                if(calendar.getTimeInMillis() > currentTime.getTimeInMillis()){
+                    
+                }
+
+            }
+        },c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
     }
 
     private Button btnAddAlarm;
