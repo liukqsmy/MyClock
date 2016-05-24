@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyClock</string>
+    <string name="add_alarm">添加闹钟</string>
+</resources>
