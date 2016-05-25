@@ -41,6 +41,8 @@ public class AlarmView extends LinearLayout {
         adapter = new ArrayAdapter<AlarmData>(getContext(),android.R.layout.simple_list_item_1);
         lvAlarmList.setAdapter(adapter);
 
+        readSavedAlarmList();
+
         adapter.add(new AlarmData(System.currentTimeMillis()));
 
         btnAddAlarm.setOnClickListener(new View.OnClickListener(){
@@ -88,6 +90,18 @@ public class AlarmView extends LinearLayout {
         editor.commit();
     }
 
+    private void readSavedAlarmList(){
+        SharedPreferences sp = getContext().getSharedPreferences(AlarmView.class.getName(), Context.MODE_PRIVATE);
+        String content = sp.getString(KEY_ALARM_LIST, null);
+
+        if(content != null){
+            String[] timeStrings = content.split(",");
+            for(String string:timeStrings)
+            {
+                adapter.add(new AlarmData(Long.parseLong(string)));
+            }
+        }
+    }
 
     private Button btnAddAlarm;
     private ListView lvAlarmList;
