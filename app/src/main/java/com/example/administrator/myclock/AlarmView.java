@@ -1,11 +1,14 @@
 package com.example.administrator.myclock;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -51,8 +54,34 @@ public class AlarmView extends LinearLayout {
                 addAlarm();
             }
         });
+
+        lvAlarmList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                new AlertDialog.Builder(getContext()).setTitle("操作选项").setItems(new CharSequence[] {"删除"}, new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        switch (i){
+                            case 0:
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }).setNegativeButton("取消",null).show();
+
+                return  true;
+            }
+        });
     }
 
+    private void deleteAlarm(int postion){
+
+    }
     private void addAlarm() {
 
         Calendar c = Calendar.getInstance();
