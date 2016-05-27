@@ -1,5 +1,6 @@
 package com.example.administrator.myclock;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -24,16 +25,23 @@ import java.util.Date;
 public class AlarmView extends LinearLayout {
     public AlarmView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     public AlarmView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public AlarmView(Context context) {
         super(context);
+        init();
     }
 
+    private void init()
+    {
+        alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+    }
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -46,7 +54,7 @@ public class AlarmView extends LinearLayout {
 
         readSavedAlarmList();
 
-        adapter.add(new AlarmData(System.currentTimeMillis()));
+        //adapter.add(new AlarmData(System.currentTimeMillis()));
 
         btnAddAlarm.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -58,7 +66,7 @@ public class AlarmView extends LinearLayout {
         lvAlarmList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int posit, long l) {
                 new AlertDialog.Builder(getContext()).setTitle("操作选项").setItems(new CharSequence[] {"删除"}, new DialogInterface.OnClickListener(){
 
                     @Override
@@ -66,7 +74,7 @@ public class AlarmView extends LinearLayout {
 
                         switch (i){
                             case 0:
-
+                                deleteAlarm(posit);
                                 break;
                             default:
                                 break;
@@ -79,8 +87,9 @@ public class AlarmView extends LinearLayout {
         });
     }
 
-    private void deleteAlarm(int postion){
-
+    private void deleteAlarm(int posit){
+        adapter.remove(adapter.getItem(posit));
+        saveAlarmList();
     }
     private void addAlarm() {
 
@@ -100,6 +109,8 @@ public class AlarmView extends LinearLayout {
                 }
 
                 adapter.add(new AlarmData(calendar.getTimeInMillis()));
+               // alarmManager.setRepeating(AlarmManager.RTC_WAKEUP);
+
                 saveAlarmList();
             }
         },c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
@@ -114,7 +125,7 @@ public class AlarmView extends LinearLayout {
         }
         String content = sb.toString().substring(0,sb.length()-1);
         editor.putString(KEY_ALARM_LIST, content);
-        System.out.println(content);
+        //System.out.println(content);
 
         editor.commit();
     }
@@ -135,6 +146,7 @@ public class AlarmView extends LinearLayout {
     private Button btnAddAlarm;
     private ListView lvAlarmList;
     private ArrayAdapter<AlarmData> adapter;
+    private AlarmManager alarmManager;
 
     private static final String KEY_ALARM_LIST = "alarmList";
 
@@ -169,5 +181,6 @@ public class AlarmView extends LinearLayout {
         private String timeLabel ="";
         private long time = 0;
         private Calendar date;
+
     }
 }
