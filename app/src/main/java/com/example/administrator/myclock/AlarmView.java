@@ -2,9 +2,11 @@ package com.example.administrator.myclock;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
 import android.view.View;
@@ -101,6 +103,8 @@ public class AlarmView extends LinearLayout {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
 
                 Calendar currentTime = Calendar.getInstance();
 
@@ -109,7 +113,7 @@ public class AlarmView extends LinearLayout {
                 }
 
                 adapter.add(new AlarmData(calendar.getTimeInMillis()));
-               // alarmManager.setRepeating(AlarmManager.RTC_WAKEUP);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 5*60*1000, PendingIntent.getBroadcast(getContext(), 0, new Intent(getContext(), AlarmReceiver.class),0));
 
                 saveAlarmList();
             }
@@ -123,9 +127,16 @@ public class AlarmView extends LinearLayout {
         for(int i=0; i< adapter.getCount(); i++){
             sb.append(adapter.getItem(i).getTime()).append(",");
         }
-        String content = sb.toString().substring(0,sb.length()-1);
-        editor.putString(KEY_ALARM_LIST, content);
-        //System.out.println(content);
+
+        if(sb.length() > 1){
+            String content = sb.toString().substring(0,sb.length()-1);
+            editor.putString(KEY_ALARM_LIST, content);
+            //System.out.println(content);
+        }else
+        {
+            editor.putString(KEY_ALARM_LIST, null);
+        }
+
 
         editor.commit();
     }
