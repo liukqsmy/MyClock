@@ -15,7 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AlarmReceiver"/>
+        <receiver android:name=".AlarmReceiver">
+            <intent-filter>
+                <action android:name="AlarmReceiver" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
