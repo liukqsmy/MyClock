@@ -14,7 +14,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.i("AlarmReceiver", "闹钟执行了");
+        Log.e("AlarmReceiver", "闹钟执行了");
 
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.cancel(PendingIntent.getBroadcast(context, getResultCode(), new Intent(context, AlarmReceiver.class),0));
