@@ -16,10 +16,12 @@
             </intent-filter>
         </activity>
         <receiver android:name=".AlarmReceiver">
-            <intent-filter>
+           <!-- <intent-filter>
                 <action android:name="AlarmReceiver" />
-            </intent-filter>
+            </intent-filter>-->
         </receiver>
+
+        <activity android:name=".PlayAlarmAty" android:screenOrientation="portrait" />
     </application>
 
 </manifest>
