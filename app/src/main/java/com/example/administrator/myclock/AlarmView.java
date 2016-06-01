@@ -2,6 +2,7 @@ package com.example.administrator.myclock;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -9,11 +10,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TimePicker;
@@ -98,34 +101,48 @@ public class AlarmView extends LinearLayout {
     }
     private void addAlarm() {
 
-        Calendar c = Calendar.getInstance();
-        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener(){
+        final Calendar c = Calendar.getInstance();
+
+        new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener(){
+
             @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MILLISECOND, 0);
+                final Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, day);
 
-                Calendar currentTime = Calendar.getInstance();
+                new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener(){
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
 
-                if(calendar.getTimeInMillis() <= currentTime.getTimeInMillis()){
-                    calendar.setTimeInMillis(calendar.getTimeInMillis()+24*60*60*1000);
-                }
 
-                AlarmData ad = new AlarmData(calendar.getTimeInMillis());
-                adapter.add(new AlarmData(calendar.getTimeInMillis()));
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
-                        5*60*1000,
-                        PendingIntent.getBroadcast(getContext(), ad.getId(), new Intent(getContext(), AlarmReceiver.class),0)
-                );
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        calendar.set(Calendar.MINUTE, minute);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
 
-                saveAlarmList();
+                        Calendar currentTime = Calendar.getInstance();
+
+                        if(calendar.getTimeInMillis() <= currentTime.getTimeInMillis()){
+                            calendar.setTimeInMillis(calendar.getTimeInMillis()+24*60*60*1000);
+                        }
+
+                        AlarmData ad = new AlarmData(calendar.getTimeInMillis());
+                        adapter.add(ad);
+                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                                calendar.getTimeInMillis(),
+                                5*60*1000,
+                                PendingIntent.getBroadcast(getContext(), ad.getId(), new Intent(getContext(), AlarmReceiver.class),0)
+                        );
+
+                        saveAlarmList();
+                    }
+                },c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
             }
-        },c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
+        },c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+
     }
 
     private void saveAlarmList(){
@@ -176,7 +193,8 @@ public class AlarmView extends LinearLayout {
             date = Calendar.getInstance();
             date.setTimeInMillis(time);
 
-            timeLabel = String.format("%d月%d日 %d:%d",
+            timeLabel = String.format("%d年%d月%d日 %d:%d",
+                    date.get(Calendar.YEAR),
                     date.get(Calendar.MONTH)+1,
                     date.get(Calendar.DAY_OF_MONTH),
                     date.get(Calendar.HOUR_OF_DAY) ,
